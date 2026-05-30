@@ -75,7 +75,6 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
-    /* ===== HEADER — ORGANISED ===== */
     .header {
       background: var(--card);
       border-bottom: 1px solid var(--border);
@@ -89,19 +88,12 @@
       transition: background-color 0.3s, border-color 0.3s;
     }
 
-    /* Title + Day Pill एक line में, Date right side पर */
     .header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       padding-bottom: 12px;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     .header h1 {
@@ -127,7 +119,7 @@
 
     .header-date {
       font-size: 12px;
-      color: var(--muted);
+      color: var(--text);
       font-family: 'Noto Sans Devanagari', sans-serif;
       white-space: nowrap;
       flex-shrink: 0;
@@ -198,7 +190,6 @@
     .tab-btn.active-g .icon { transform: translateY(-4px) scale(1.3) rotate(10deg); filter: drop-shadow(0 3px 5px rgba(14,159,110,0.4)); }
     .tab-btn.active-o .icon { transform: translateY(-4px) scale(1.3) rotate(-10deg); filter: drop-shadow(0 3px 5px rgba(217,119,6,0.4)); }
 
-    /* === Progress bar — inline row layout === */
     .progress-wrap {
       display: flex;
       align-items: center;
@@ -272,7 +263,6 @@
     @keyframes slideInLeft { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes slideInRight { from { transform: translateX(-60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* === चैप्टर कार्ड्स === */
     .chapter-card {
       background: var(--card-gradient); 
       border: 1px solid var(--border); 
@@ -334,7 +324,6 @@
     .pill-g { background: var(--pill-g-bg); color: var(--pill-g-text); border: 1px solid var(--pill-g-border); }
     .pill-o { background: var(--pill-o-bg); color: var(--pill-o-text); border: 1px solid var(--pill-o-border); }
 
-    /* === सोनिक पल्स चेक-बॉक्स === */
     .check-box {
       width: 30px; height: 30px; 
       border-radius: 50%;
@@ -369,7 +358,6 @@
     .check-g.checked { background: var(--accent-g); border-color: var(--accent-g); color: #fff; animation: checkPopG 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     .check-o.checked { background: var(--accent-o); border-color: var(--accent-o); color: #fff; animation: checkPopO 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
-    /* === Math का ओरिजिनल डिज़ाइन === */
     .sub-list { 
       display: flex; 
       flex-direction: column; 
@@ -450,10 +438,8 @@
 
 <div class="header">
   <div class="header-top">
-    <div class="header-left">
-      <h1>आज का Revision</h1>
-      <div class="day-pill" id="dayPill">...</div>
-    </div>
+    <div class="day-pill" id="dayPill">...</div>
+    <h1>आज का Revision</h1>
     <div class="header-date" id="dateText"></div>
   </div>
   <div class="tabs" id="tabsContainer">
@@ -665,14 +651,12 @@ function toggleDone(key, card, clr) {
   setTimeout(reorderCards, 400);
 }
 
-// === 1. Midnight auto-reload ===
 (function() {
   var now = new Date();
   var msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1) - now;
   setTimeout(function() { location.reload(); }, msToMidnight);
 })();
 
-// === 2. Done cards neeche shift karne ka helper ===
 function reorderCards() {
   var content = document.getElementById("content");
   var cards = Array.from(content.querySelectorAll(".chapter-card"));
@@ -681,15 +665,12 @@ function reorderCards() {
   pending.concat(done).forEach(function(c) { content.appendChild(c); });
 }
 
-// === 3. Haptic feedback helper ===
 function haptic() {
   if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// Init
 switchTab(activeTab, null);
 
-// Swipe detection
 var touchStartX = 0;
 var touchStartY = 0;
 document.addEventListener("touchstart", function(e) {
@@ -710,7 +691,6 @@ document.addEventListener("touchend", function(e) {
   }
 }, { passive: true });
 
-// Fetch data
 var cacheObj = {};
 var bsDone = false, mathDone = false;
 
