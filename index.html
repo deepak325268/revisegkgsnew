@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <link rel="manifest" href="/revision_gkgs/manifest.json">
+  <link rel="apple-touch-icon" href="/revision_gkgs/logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Revision">
+  <title>आज का Revision</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* === LIGHT MODE === */
+    :root {
+      --bg: #f3f4f6; 
+      --card: #ffffff;
+      --card-gradient: linear-gradient(145deg, #ffffff, #f9fafb);
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      
+      --accent-b: #3b82f6;
+      --accent-g: #22c55e;
+      --accent-o: #f97316;
+      
+      --pill-b-bg: #eff6ff; --pill-b-text: #1d4ed8; --pill-b-border: #bfdbfe;
+      --pill-g-bg: #f0fdf4; --pill-g-text: #15803d; --pill-g-border: #bbf7d0;
+      --pill-o-bg: #fffbeb; --pill-o-text: #b45309; --pill-o-border: #fde68a;
+
+      --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+      --card-active-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+      --radius: 18px; 
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* === DARK MODE === */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #09090b; 
+        --card: #18181b; 
+        --card-gradient: linear-gradient(145deg, #18181b, #121214);
+        --border: #27272a;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        
+        --accent-b: #60a5fa;
+        --accent-g: #4ade80;
+        --accent-o: #fb923c;
+
+        --pill-b-bg: rgba(59, 130, 246, 0.15); --pill-b-text: #93c5fd; --pill-b-border: rgba(59, 130, 246, 0.3);
+        --pill-g-bg: rgba(34, 197, 94, 0.15); --pill-g-text: #86efac; --pill-g-border: rgba(34, 197, 94, 0.3);
+        --pill-o-bg: rgba(249, 115, 22, 0.15); --pill-o-text: #fdba74; --pill-o-border: rgba(249, 115, 22, 0.3);
+
+        --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        --card-active-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 60px;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ===== HEADER — ORGANISED ===== */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding-top: calc(var(--safe-top) + 12px);
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    /* Title + Day Pill एक line में, Date right side पर */
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header h1 {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .day-pill {
+      background: var(--text);
+      color: var(--bg);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .header-date {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tabs {
+      display: flex;
+      position: relative; 
+      border-top: 1px solid var(--border);
+      background: var(--card);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 15px 8px; 
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      text-transform: uppercase; 
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px; 
+      transition: all 0.4s cubic-bezier(0.34, 1.6, 0.64, 1);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn:active { transform: scale(0.9); }
+
+    .tab-btn .icon {
+      display: inline-block;
+      font-size: 16px;
+      transition: all 0.5s cubic-bezier(0.34, 1.8, 0.64, 1);
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0%;
+      height: 2.5px;
+      border-radius: 10px 10px 0 0;
+      transform: translateX(-50%); 
+      transition: width 0.4s cubic-bezier(0.34, 1.6, 0.64, 1),
+                  background-color 0.4s ease,
+                  box-shadow 0.4s ease;
+      z-index: 5;
+    }
+
+    .tab-btn.active-b::after { width: 100%; background-color: var(--accent-b); box-shadow: 0 -1px 10px 1px rgba(59, 130, 246, 0.7), 0 -2px 18px 2px rgba(59, 130, 246, 0.3); }
+    .tab-btn.active-g::after { width: 100%; background-color: var(--accent-g); box-shadow: 0 -1px 10px 1px rgba(34, 197, 94, 0.7), 0 -2px 18px 2px rgba(34, 197, 94, 0.3); }
+    .tab-btn.active-o::after { width: 100%; background-color: var(--accent-o); box-shadow: 0 -1px 10px 1px rgba(249, 115, 22, 0.7), 0 -2px 18px 2px rgba(249, 115, 22, 0.3); }
+
+    .tab-btn.active-b { color: var(--accent-b); font-weight: 700; transform: translateY(-2px) scale(1.05); text-shadow: 0 2px 8px rgba(26, 86, 219, 0.2); }
+    .tab-btn.active-g { color: var(--accent-g); font-weight: 700; transform: translateY(-2px) scale(1.05); text-shadow: 0 2px 8px rgba(14, 159, 110, 0.2); }
+    .tab-btn.active-o { color: var(--accent-o); font-weight: 700; transform: translateY(-2px) scale(1.05); text-shadow: 0 2px 8px rgba(217, 119, 6, 0.2); }
+
+    .tab-btn.active-b .icon { transform: translateY(-4px) scale(1.3) rotate(-10deg); filter: drop-shadow(0 3px 5px rgba(26,86,219,0.4)); }
+    .tab-btn.active-g .icon { transform: translateY(-4px) scale(1.3) rotate(10deg); filter: drop-shadow(0 3px 5px rgba(14,159,110,0.4)); }
+    .tab-btn.active-o .icon { transform: translateY(-4px) scale(1.3) rotate(-10deg); filter: drop-shadow(0 3px 5px rgba(217,119,6,0.4)); }
+
+    /* === Progress bar — inline row layout === */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px 12px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); 
+    }
+    
+    @keyframes progress-stripes {
+      from { background-position: 20px 0; }
+      to { background-position: 0 0; }
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.34, 1.6, 0.64, 1);
+      background-size: 20px 20px;
+      animation: progress-stripes 1s linear infinite; 
+    }
+    
+    .fill-b { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #2563eb, #60a5fa); box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+    .fill-g { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #16a34a, #4ade80); box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+    .fill-o { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #ea580c, #fb923c); box-shadow: 0 0 10px rgba(249, 115, 22, 0.5); }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted); 
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .stale-bar {
+      display: none;
+      background: var(--pill-o-bg);
+      color: var(--pill-o-text);
+      font-size: 11px;
+      text-align: center;
+      padding: 4px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+    }
+    .stale-bar.show { display: block; }
+
+    .main {
+      padding: 18px 16px 0;
+      max-width: 520px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    #content {
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), opacity 0.25s;
+    }
+    #content.slide-left { animation: slideInLeft 0.25s cubic-bezier(.4,0,.2,1) both; }
+    #content.slide-right { animation: slideInRight 0.25s cubic-bezier(.4,0,.2,1) both; }
+
+    @keyframes slideInLeft { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(-60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* === चैप्टर कार्ड्स === */
+    .chapter-card {
+      background: var(--card-gradient); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center; 
+      gap: 16px;
+      cursor: pointer;
+      box-shadow: var(--card-shadow); 
+      transition: all 0.4s cubic-bezier(0.34, 1.6, 0.64, 1);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      position: relative;
+      overflow: hidden; 
+    }
+    
+    .chapter-card:active { 
+      transform: translateY(2px) scale(0.97); 
+      box-shadow: var(--card-active-shadow); 
+    }
+    
+    .chapter-card.done { 
+      opacity: 0.6; 
+      background: var(--bg); 
+      transform: scale(0.98);
+      box-shadow: none;
+      border: 1.5px dashed var(--muted);
+    }
+
+    .chapter-info { flex: 1; min-width: 0; }
+
+    .chapter-name {
+      font-size: 16px; 
+      font-weight: 700; 
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 10px;
+      transition: color 0.3s;
+    }
+    
+    .chapter-card.done .chapter-name { 
+      text-decoration: line-through; 
+      text-decoration-thickness: 2.5px;
+      color: var(--muted); 
+    }
+
+    .cls-pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+    .pill-b { background: var(--pill-b-bg); color: var(--pill-b-text); border: 1px solid var(--pill-b-border); }
+    .pill-g { background: var(--pill-g-bg); color: var(--pill-g-text); border: 1px solid var(--pill-g-border); }
+    .pill-o { background: var(--pill-o-bg); color: var(--pill-o-text); border: 1px solid var(--pill-o-border); }
+
+    /* === सोनिक पल्स चेक-बॉक्स === */
+    .check-box {
+      width: 30px; height: 30px; 
+      border-radius: 50%;
+      border: 2.5px solid var(--muted); 
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 900;
+      background: var(--card);
+      color: transparent; 
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    @keyframes checkPopB {
+      0% { transform: scale(0.8) rotate(0deg); box-shadow: 0 0 0 0 rgba(59,130,246,0.6); }
+      50% { transform: scale(1.25) rotate(180deg); box-shadow: 0 0 0 12px rgba(59,130,246,0); }
+      100% { transform: scale(1.15) rotate(360deg); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+    }
+    @keyframes checkPopG {
+      0% { transform: scale(0.8) rotate(0deg); box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+      50% { transform: scale(1.25) rotate(180deg); box-shadow: 0 0 0 12px rgba(34,197,94,0); }
+      100% { transform: scale(1.15) rotate(360deg); box-shadow: 0 4px 12px rgba(34,197,94,0.4); }
+    }
+    @keyframes checkPopO {
+      0% { transform: scale(0.8) rotate(0deg); box-shadow: 0 0 0 0 rgba(249,115,22,0.6); }
+      50% { transform: scale(1.25) rotate(180deg); box-shadow: 0 0 0 12px rgba(249,115,22,0); }
+      100% { transform: scale(1.15) rotate(360deg); box-shadow: 0 4px 12px rgba(249,115,22,0.4); }
+    }
+
+    .check-b.checked { background: var(--accent-b); border-color: var(--accent-b); color: #fff; animation: checkPopB 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .check-g.checked { background: var(--accent-g); border-color: var(--accent-g); color: #fff; animation: checkPopG 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .check-o.checked { background: var(--accent-o); border-color: var(--accent-o); color: #fff; animation: checkPopO 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+    /* === Math का ओरिजिनल डिज़ाइन === */
+    .sub-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+    }
+    .sub-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sub-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      min-width: 44px;
+    }
+    .sub-q {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-o);
+      font-family: 'Inter', sans-serif;
+      background: var(--pill-o-bg);
+      padding: 2px 10px;
+      border-radius: 6px;
+    }
+
+    .loading {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 20px; gap: 14px; color: var(--muted); font-size: 14px; font-weight: 600;
+    }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 3px solid var(--border);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .spin-b { border-top-color: var(--accent-b); }
+    .spin-g { border-top-color: var(--accent-g); }
+    .spin-o { border-top-color: var(--accent-o); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-box { text-align: center; padding: 50px 20px; }
+    .error-box p { font-size: 14px; color: var(--muted); margin-bottom: 16px; font-weight: 600; font-family: 'Noto Sans Devanagari', sans-serif; }
+    .retry-btn {
+      background: var(--text); color: var(--bg);
+      border: none; padding: 12px 28px; border-radius: 12px;
+      font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .done-banner {
+      display: none;
+      text-align: center;
+      padding: 18px;
+      margin: 0 0 20px;
+      background: linear-gradient(135deg, var(--pill-g-bg), var(--card));
+      border-left: 6px solid var(--accent-g);
+      color: var(--text);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      animation: popIn 0.5s cubic-bezier(0.34, 1.8, 0.64, 1);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .done-banner.show { display: block; }
+    .done-banner h3 {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent-g);
+    }
+    .done-banner p { font-size: 13.5px; margin-top: 6px; font-weight: 600; font-family: 'Noto Sans Devanagari', sans-serif; opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <h1>आज का Revision</h1>
+      <div class="day-pill" id="dayPill">...</div>
+    </div>
+    <div class="header-date" id="dateText"></div>
+  </div>
+  <div class="tabs" id="tabsContainer">
+    <button class="tab-btn" id="tab-b" onclick="switchTab('bhugol', null)"><span class="icon">🗺</span> भूगोल</button>
+    <button class="tab-btn" id="tab-g" onclick="switchTab('science', null)"><span class="icon">🔬</span> विज्ञान</button>
+    <button class="tab-btn" id="tab-o" onclick="switchTab('math', null)"><span class="icon">📐</span> Math</button>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">Loading...</div>
+</div>
+<div class="stale-bar" id="staleBar">⟳ Updating data...</div>
+
+<div class="main">
+  <div class="done-banner" id="doneBanner">
+    <h3>✅ सब complete हो गया!</h3>
+    <p>आज का revision खत्म।</p>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+const API_BS   = "https://script.google.com/macros/s/AKfycbx2e2C9JBilgw7B4ZdOdb5-MEtkcnPjEB18qYWRTIgkNohmhJc2VXcEMEqm8oyVprYk/exec";
+const API_MATH = "https://script.google.com/macros/s/AKfycbxk49C7jQafjKBKqR4jPeFzAl2ltlUkd1WXkErL8ih4lXF_19q2eVcFRYr8zCf0OhQBww/exec";
+
+const today    = new Date();
+const dateStr  = today.toISOString().slice(0,10);
+const doneKey  = "done_" + dateStr;
+const cacheKey = "cache_" + dateStr;
+
+let doneSet  = new Set(JSON.parse(localStorage.getItem(doneKey) || "[]"));
+let allData  = { bhugol: null, science: null, math: null };
+let dayNums  = { bs: null, math: null };
+
+var savedTab = localStorage.getItem("activeTab") || "bhugol";
+let activeTab = savedTab;
+
+const TABS = ["bhugol", "science", "math"];
+
+document.getElementById("dateText").textContent =
+  today.toLocaleDateString("hi-IN", { weekday:"long", day:"numeric", month:"long" });
+
+var cached = localStorage.getItem(cacheKey);
+if (cached) {
+  try {
+    var c = JSON.parse(cached);
+    if (c.bs) {
+      dayNums.bs = c.bs.day;
+      c.bs.subjects.forEach(function(sub) {
+        if (sub.name === "भूगोल") allData.bhugol = { chapters: sub.chapters };
+        else if (sub.name === "विज्ञान") allData.science = { chapters: sub.chapters };
+      });
+    }
+    if (c.math) {
+      dayNums.math = c.math.day;
+      allData.math = c.math;
+    }
+  } catch(e) {}
+}
+
+function save() {
+  localStorage.setItem(doneKey, JSON.stringify([...doneSet]));
+  updateProgress();
+}
+
+function countTotal(tab) {
+  var d = allData[tab];
+  if (!d || !d.chapters) return 0;
+  return d.chapters.length;
+}
+
+function countDone(tab) {
+  var done = 0;
+  doneSet.forEach(function(k) { if (k.startsWith(tab+"_")) done++; });
+  return done;
+}
+
+function updateDayPill() {
+  var day = activeTab === "math" ? dayNums.math : dayNums.bs;
+  document.getElementById("dayPill").textContent = day ? "Day " + day : "...";
+}
+
+function updateProgress() {
+  var total = countTotal(activeTab);
+  var done  = countDone(activeTab);
+  var pct   = total ? Math.round((done/total)*100) : 0;
+  var fill  = document.getElementById("progressFill");
+  fill.style.width = pct + "%";
+  var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
+  fill.className = "progress-fill fill-" + clr;
+  document.getElementById("progressLabel").textContent = done + " / " + total + " complete (" + pct + "%)";
+  document.getElementById("doneBanner").classList.toggle("show", done===total && total>0);
+}
+
+function switchTab(tab, direction) {
+  activeTab = tab;
+  localStorage.setItem("activeTab", tab);
+  window.scrollTo(0, 0);
+  
+  ["bhugol","science","math"].forEach(function(t) {
+    var k = t==="bhugol"?"b":t==="science"?"g":"o";
+    document.getElementById("tab-"+k).className = "tab-btn";
+  });
+  
+  var key = tab==="bhugol"?"b":tab==="science"?"g":"o";
+  document.getElementById("tab-"+key).className = "tab-btn active-" + key;
+
+  updateDayPill();
+  renderTab(direction);
+}
+
+function renderTab(direction) {
+  var content = document.getElementById("content");
+  var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
+
+  content.classList.remove("slide-left", "slide-right");
+
+  if (!allData[activeTab]) {
+    content.innerHTML = '<div class="loading"><div class="spinner spin-'+clr+'"></div><span>Loading...</span></div>';
+    updateProgress();
+    return;
+  }
+
+  content.innerHTML = "";
+  var data = allData[activeTab];
+
+  if (!data.chapters || data.chapters.length === 0) {
+    content.innerHTML = '<div class="error-box"><p>कोई chapter नहीं मिला।</p></div>';
+    return;
+  }
+
+  if (activeTab === "math") {
+    data.chapters.forEach(function(ch, i) {
+      content.appendChild(makeMathCard("math_"+i, ch));
+    });
+  } else {
+    data.chapters.forEach(function(ch, i) {
+      content.appendChild(makeBSCard(activeTab+"_"+i, ch, clr));
+    });
+  }
+
+  if (direction === "left") {
+    void content.offsetWidth;
+    content.classList.add("slide-left");
+  } else if (direction === "right") {
+    void content.offsetWidth;
+    content.classList.add("slide-right");
+  }
+
+  updateProgress();
+}
+
+function makeBSCard(key, ch, clr) {
+  var done = doneSet.has(key);
+  var card = document.createElement("div");
+  card.className = "chapter-card" + (done?" done":"");
+  card.innerHTML =
+    '<div class="chapter-info">' +
+      '<div class="chapter-name">' + ch.chapter + '</div>' +
+      '<span class="cls-pill pill-'+clr+'">Class ' + ch.cls + '</span>' +
+    '</div>' +
+    '<div class="check-box check-'+clr+(done?" checked":"")+'">'+( done?"✓":"")+'</div>';
+  card.addEventListener("click", function() { toggleDone(key, card, clr); });
+  return card;
+}
+
+function makeMathCard(key, ch) {
+  var done = doneSet.has(key);
+  var card = document.createElement("div");
+  card.className = "chapter-card" + (done?" done":"");
+  var subsHtml = '<div class="sub-list">';
+  ch.subs.forEach(function(s) {
+    subsHtml += '<div class="sub-row"><span class="sub-label">Sub '+s.subNum+'</span><span class="sub-q">Q. '+s.q+'</span></div>';
+  });
+  subsHtml += '</div>';
+  card.innerHTML =
+    '<div class="chapter-info">' +
+      '<div class="chapter-name">' + ch.chapter + '</div>' +
+      subsHtml +
+    '</div>' +
+    '<div class="check-box check-o'+(done?" checked":"")+'">'+( done?"✓":"")+'</div>';
+  card.addEventListener("click", function() { toggleDone(key, card, "o"); });
+  return card;
+}
+
+function toggleDone(key, card, clr) {
+  haptic();
+  if (doneSet.has(key)) {
+    doneSet.delete(key);
+    card.classList.remove("done");
+    card.querySelector(".check-box").className = "check-box check-"+clr;
+    
+    card.querySelector(".check-box").style.animation = 'none';
+    card.querySelector(".check-box").offsetHeight; 
+    card.querySelector(".check-box").style.animation = null;
+    
+    card.querySelector(".check-box").textContent = "";
+  } else {
+    doneSet.add(key);
+    card.classList.add("done");
+    card.querySelector(".check-box").className = "check-box check-"+clr+" checked";
+    card.querySelector(".check-box").textContent = "✓";
+  }
+  save();
+  setTimeout(reorderCards, 400);
+}
+
+// === 1. Midnight auto-reload ===
+(function() {
+  var now = new Date();
+  var msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1) - now;
+  setTimeout(function() { location.reload(); }, msToMidnight);
+})();
+
+// === 2. Done cards neeche shift karne ka helper ===
+function reorderCards() {
+  var content = document.getElementById("content");
+  var cards = Array.from(content.querySelectorAll(".chapter-card"));
+  var pending = cards.filter(function(c) { return !c.classList.contains("done"); });
+  var done    = cards.filter(function(c) { return  c.classList.contains("done"); });
+  pending.concat(done).forEach(function(c) { content.appendChild(c); });
+}
+
+// === 3. Haptic feedback helper ===
+function haptic() {
+  if (navigator.vibrate) navigator.vibrate(10);
+}
+
+// Init
+switchTab(activeTab, null);
+
+// Swipe detection
+var touchStartX = 0;
+var touchStartY = 0;
+document.addEventListener("touchstart", function(e) {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.addEventListener("touchend", function(e) {
+  var dx = e.changedTouches[0].clientX - touchStartX;
+  var dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    var idx = TABS.indexOf(activeTab);
+    if (dx < 0 && idx < TABS.length - 1) {
+      switchTab(TABS[idx + 1], "left");
+    } else if (dx > 0 && idx > 0) {
+      switchTab(TABS[idx - 1], "right");
+    }
+  }
+}, { passive: true });
+
+// Fetch data
+var cacheObj = {};
+var bsDone = false, mathDone = false;
+
+function saveCache() {
+  if (bsDone && mathDone) {
+    localStorage.setItem(cacheKey, JSON.stringify(cacheObj));
+    document.getElementById("staleBar").classList.remove("show");
+  }
+}
+
+if (cached) {
+  document.getElementById("staleBar").classList.add("show");
+}
+
+fetch(API_BS)
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    cacheObj.bs = data;
+    dayNums.bs = data.day;
+    data.subjects.forEach(function(sub) {
+      if (sub.name === "भूगोल") allData.bhugol = { chapters: sub.chapters };
+      else if (sub.name === "विज्ञान") allData.science = { chapters: sub.chapters };
+    });
+    if (activeTab === "bhugol" || activeTab === "science") {
+      updateDayPill();
+      renderTab(null);
+    }
+    bsDone = true;
+    saveCache();
+  })
+  .catch(function() {
+    bsDone = true;
+    saveCache();
+    if (!allData.bhugol && (activeTab==="bhugol"||activeTab==="science")) {
+      document.getElementById("content").innerHTML =
+        '<div class="error-box"><p>Data load नहीं हुआ।</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>';
+    }
+  });
+
+fetch(API_MATH)
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    cacheObj.math = data;
+    dayNums.math = data.day;
+    allData.math = data;
+    if (activeTab === "math") {
+      updateDayPill();
+      renderTab(null);
+    }
+    mathDone = true;
+    saveCache();
+  })
+  .catch(function() {
+    mathDone = true;
+    saveCache();
+    if (!allData.math && activeTab==="math") {
+      document.getElementById("content").innerHTML =
+        '<div class="error-box"><p>Math data load नहीं हुआ।</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>';
+    }
+  });
+</script>
+</body>
+</html>
