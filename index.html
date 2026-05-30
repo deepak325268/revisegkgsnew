@@ -548,7 +548,7 @@ function updateProgress() {
   fill.style.width = pct + "%";
   var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
   fill.className = "progress-fill fill-" + clr;
-  document.getElementById("progressLabel").textContent = done + " / " + total + " complete (" + pct + "%)";
+  document.getElementById("progressLabel").textContent = done + " / " + total + " (" + pct + "%)";
   document.getElementById("doneBanner").classList.toggle("show", done===total && total>0);
 }
 
