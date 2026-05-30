@@ -1,13 +1,13 @@
 {
-  "name": "DEEPAK",
-  "short_name": "DEEPAK",
-  "start_url": "/revision_gkgs/",
+  "name": "DEEPAK2",
+  "short_name": "DEEPAK2",
+  "start_url": "/revisegkgsnew/",
   "display": "standalone",
   "background_color": "#f5f5f0",
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/revision_gkgs/logo.png",
+      "src": "/revisegkgsnew/logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
