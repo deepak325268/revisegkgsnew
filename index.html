@@ -18,7 +18,6 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* === LIGHT MODE === */
     :root {
       --bg: #f3f4f6; 
       --card: #ffffff;
@@ -42,7 +41,6 @@
       --safe-top: env(safe-area-inset-top, 0px);
     }
 
-    /* === DARK MODE === */
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #09090b; 
@@ -254,15 +252,49 @@
       overflow: hidden;
     }
 
-    #content {
-      transition: transform 0.25s cubic-bezier(.4,0,.2,1), opacity 0.25s;
+    /* === SMOOTH SLIDE WRAPPER === */
+    #slideWrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
     }
-    #content.slide-left { animation: slideInLeft 0.25s cubic-bezier(.4,0,.2,1) both; }
-    #content.slide-right { animation: slideInRight 0.25s cubic-bezier(.4,0,.2,1) both; }
 
-    @keyframes slideInLeft { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideInRight { from { transform: translateX(-60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    #content {
+      transition: none;
+      will-change: transform, opacity;
+    }
 
+    #content.slide-out-left {
+      animation: slideOutLeft 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    #content.slide-out-right {
+      animation: slideOutRight 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    #content.slide-in-left {
+      animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #content.slide-in-right {
+      animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideOutLeft {
+      from { transform: translateX(0); opacity: 1; }
+      to   { transform: translateX(-80px); opacity: 0; }
+    }
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to   { transform: translateX(80px); opacity: 0; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(80px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(-80px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+
+    /* === CHAPTER CARD === */
     .chapter-card {
       background: var(--card-gradient); 
       border: 1px solid var(--border); 
@@ -285,13 +317,22 @@
       transform: translateY(2px) scale(0.97); 
       box-shadow: var(--card-active-shadow); 
     }
-    
+
     .chapter-card.done { 
-      opacity: 0.6; 
+      opacity: 0.55; 
       background: var(--bg); 
       transform: scale(0.98);
       box-shadow: none;
       border: 1.5px dashed var(--muted);
+    }
+    
+    .chapter-card.done:active {
+      transform: scale(0.97);
+    }
+
+    /* Smooth reorder animation */
+    .chapter-card.reordering {
+      transition: transform 0.45s cubic-bezier(0.34, 1.6, 0.64, 1);
     }
 
     .chapter-info { flex: 1; min-width: 0; }
@@ -458,11 +499,13 @@
 <div class="stale-bar" id="staleBar">⟳ Updating data...</div>
 
 <div class="main">
-  <div class="done-banner" id="doneBanner">
-    <h3>✅ सब complete हो गया!</h3>
-    <p>आज का revision खत्म।</p>
+  <div id="slideWrapper">
+    <div class="done-banner" id="doneBanner">
+      <h3>✅ सब complete हो गया!</h3>
+      <p>आज का revision खत्म।</p>
+    </div>
+    <div id="content"></div>
   </div>
-  <div id="content"></div>
 </div>
 
 <script>
@@ -480,6 +523,7 @@ let dayNums  = { bs: null, math: null };
 
 var savedTab = localStorage.getItem("activeTab") || "bhugol";
 let activeTab = savedTab;
+let isSliding = false;
 
 const TABS = ["bhugol", "science", "math"];
 
@@ -539,27 +583,70 @@ function updateProgress() {
 }
 
 function switchTab(tab, direction) {
+  if (isSliding) return;
+  if (tab === activeTab && direction === null) {
+    // First load, no animation
+    activeTab = tab;
+    localStorage.setItem("activeTab", tab);
+    updateTabUI();
+    updateDayPill();
+    renderContent();
+    return;
+  }
+  
+  // Determine direction based on tab positions
+  if (direction === null) {
+    var oldIdx = TABS.indexOf(activeTab);
+    var newIdx = TABS.indexOf(tab);
+    direction = newIdx > oldIdx ? "left" : "right";
+  }
+  
+  var content = document.getElementById("content");
+  isSliding = true;
+  
+  // Step 1: Slide out current content
+  var outClass = direction === "left" ? "slide-out-left" : "slide-out-right";
+  var inClass  = direction === "left" ? "slide-in-left" : "slide-in-right";
+  
+  content.classList.remove("slide-out-left", "slide-out-right", "slide-in-left", "slide-in-right");
+  void content.offsetWidth; // force reflow
+  content.classList.add(outClass);
+  
   activeTab = tab;
   localStorage.setItem("activeTab", tab);
+  updateTabUI();
+  updateDayPill();
   window.scrollTo(0, 0);
   
+  setTimeout(function() {
+    // Step 2: Replace content while hidden
+    renderContent();
+    
+    // Step 3: Slide in new content
+    content.classList.remove(outClass);
+    void content.offsetWidth;
+    content.classList.add(inClass);
+    
+    setTimeout(function() {
+      content.classList.remove(inClass);
+      isSliding = false;
+    }, 360);
+  }, 260);
+}
+
+function updateTabUI() {
   ["bhugol","science","math"].forEach(function(t) {
     var k = t==="bhugol"?"b":t==="science"?"g":"o";
     document.getElementById("tab-"+k).className = "tab-btn";
   });
   
-  var key = tab==="bhugol"?"b":tab==="science"?"g":"o";
+  var key = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
   document.getElementById("tab-"+key).className = "tab-btn active-" + key;
-
-  updateDayPill();
-  renderTab(direction);
 }
 
-function renderTab(direction) {
+function renderContent() {
   var content = document.getElementById("content");
   var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
-
-  content.classList.remove("slide-left", "slide-right");
 
   if (!allData[activeTab]) {
     content.innerHTML = '<div class="loading"><div class="spinner spin-'+clr+'"></div><span>Loading...</span></div>';
@@ -572,27 +659,29 @@ function renderTab(direction) {
 
   if (!data.chapters || data.chapters.length === 0) {
     content.innerHTML = '<div class="error-box"><p>कोई chapter नहीं मिला।</p></div>';
+    updateProgress();
     return;
   }
 
+  // Build all cards first, then sort: pending first, done last
+  var cards = [];
+  
   if (activeTab === "math") {
     data.chapters.forEach(function(ch, i) {
-      content.appendChild(makeMathCard("math_"+i, ch));
+      cards.push(makeMathCard("math_"+i, ch));
     });
   } else {
     data.chapters.forEach(function(ch, i) {
-      content.appendChild(makeBSCard(activeTab+"_"+i, ch, clr));
+      cards.push(makeBSCard(activeTab+"_"+i, ch, clr));
     });
   }
-
-  if (direction === "left") {
-    void content.offsetWidth;
-    content.classList.add("slide-left");
-  } else if (direction === "right") {
-    void content.offsetWidth;
-    content.classList.add("slide-right");
-  }
-
+  
+  // Sort: pending cards first, done cards last
+  var pending = cards.filter(function(c) { return !c.classList.contains("done"); });
+  var done    = cards.filter(function(c) { return  c.classList.contains("done"); });
+  
+  pending.concat(done).forEach(function(c) { content.appendChild(c); });
+  
   updateProgress();
 }
 
@@ -600,6 +689,7 @@ function makeBSCard(key, ch, clr) {
   var done = doneSet.has(key);
   var card = document.createElement("div");
   card.className = "chapter-card" + (done?" done":"");
+  card.dataset.key = key;
   card.innerHTML =
     '<div class="chapter-info">' +
       '<div class="chapter-name">' + ch.chapter + '</div>' +
@@ -614,6 +704,7 @@ function makeMathCard(key, ch) {
   var done = doneSet.has(key);
   var card = document.createElement("div");
   card.className = "chapter-card" + (done?" done":"");
+  card.dataset.key = key;
   var subsHtml = '<div class="sub-list">';
   ch.subs.forEach(function(s) {
     subsHtml += '<div class="sub-row"><span class="sub-label">Sub '+s.subNum+'</span><span class="sub-q">Q. '+s.q+'</span></div>';
@@ -634,21 +725,68 @@ function toggleDone(key, card, clr) {
   if (doneSet.has(key)) {
     doneSet.delete(key);
     card.classList.remove("done");
-    card.querySelector(".check-box").className = "check-box check-"+clr;
-    
-    card.querySelector(".check-box").style.animation = 'none';
-    card.querySelector(".check-box").offsetHeight; 
-    card.querySelector(".check-box").style.animation = null;
-    
-    card.querySelector(".check-box").textContent = "";
+    var cb = card.querySelector(".check-box");
+    cb.className = "check-box check-"+clr;
+    cb.style.animation = 'none';
+    void cb.offsetHeight;
+    cb.style.animation = null;
+    cb.textContent = "";
   } else {
     doneSet.add(key);
     card.classList.add("done");
-    card.querySelector(".check-box").className = "check-box check-"+clr+" checked";
-    card.querySelector(".check-box").textContent = "✓";
+    var cb = card.querySelector(".check-box");
+    cb.className = "check-box check-"+clr+" checked";
+    cb.textContent = "✓";
   }
   save();
-  setTimeout(reorderCards, 400);
+  // Reorder after animation settles
+  setTimeout(reorderCards, 350);
+}
+
+function reorderCards() {
+  var content = document.getElementById("content");
+  var cards = Array.from(content.querySelectorAll(".chapter-card"));
+  var pending = cards.filter(function(c) { return !c.classList.contains("done"); });
+  var done    = cards.filter(function(c) { return  c.classList.contains("done"); });
+  
+  // Check if order already correct
+  var needReorder = false;
+  var sorted = pending.concat(done);
+  for (var i = 0; i < sorted.length; i++) {
+    if (sorted[i] !== cards[i]) { needReorder = true; break; }
+  }
+  
+  if (needReorder) {
+    // Use FLIP animation for smooth reorder
+    // Record current positions
+    var firstPositions = {};
+    cards.forEach(function(c) {
+      firstPositions[c.dataset.key] = c.getBoundingClientRect().top;
+    });
+    
+    // Reorder DOM
+    pending.concat(done).forEach(function(c) { content.appendChild(c); });
+    
+    // Apply inverse transform and animate
+    cards.forEach(function(c) {
+      var lastTop = c.getBoundingClientRect().top;
+      var firstTop = firstPositions[c.dataset.key];
+      var delta = firstTop - lastTop;
+      
+      if (Math.abs(delta) > 1) {
+        c.style.transform = 'translateY(' + delta + 'px)';
+        c.style.transition = 'none';
+        void c.offsetHeight;
+        c.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.6, 0.64, 1), opacity 0.3s ease';
+        c.style.transform = 'translateY(0)';
+        
+        setTimeout(function() {
+          c.style.transform = '';
+          c.style.transition = '';
+        }, 450);
+      }
+    });
+  }
 }
 
 (function() {
@@ -657,20 +795,14 @@ function toggleDone(key, card, clr) {
   setTimeout(function() { location.reload(); }, msToMidnight);
 })();
 
-function reorderCards() {
-  var content = document.getElementById("content");
-  var cards = Array.from(content.querySelectorAll(".chapter-card"));
-  var pending = cards.filter(function(c) { return !c.classList.contains("done"); });
-  var done    = cards.filter(function(c) { return  c.classList.contains("done"); });
-  pending.concat(done).forEach(function(c) { content.appendChild(c); });
-}
-
 function haptic() {
   if (navigator.vibrate) navigator.vibrate(10);
 }
 
+// Initial render
 switchTab(activeTab, null);
 
+// Swipe gesture handling
 var touchStartX = 0;
 var touchStartY = 0;
 document.addEventListener("touchstart", function(e) {
@@ -691,6 +823,7 @@ document.addEventListener("touchend", function(e) {
   }
 }, { passive: true });
 
+// Fetch data
 var cacheObj = {};
 var bsDone = false, mathDone = false;
 
@@ -716,7 +849,7 @@ fetch(API_BS)
     });
     if (activeTab === "bhugol" || activeTab === "science") {
       updateDayPill();
-      renderTab(null);
+      renderContent();
     }
     bsDone = true;
     saveCache();
@@ -738,7 +871,7 @@ fetch(API_MATH)
     allData.math = data;
     if (activeTab === "math") {
       updateDayPill();
-      renderTab(null);
+      renderContent();
     }
     mathDone = true;
     saveCache();
