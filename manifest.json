@@ -2,10 +2,16 @@
   "name": "DEEPAK2",
   "short_name": "DEEPAK2",
   "start_url": "/revisegkgsnew/",
+  "scope": "/revisegkgsnew/",
   "display": "standalone",
   "background_color": "#f5f5f0",
   "theme_color": "#ffffff",
   "icons": [
+    {
+      "src": "/revisegkgsnew/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
     {
       "src": "/revisegkgsnew/logo.png",
       "sizes": "512x512",
