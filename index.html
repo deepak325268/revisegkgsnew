@@ -517,6 +517,14 @@ const dateStr  = yyyy + '-' + mm + '-' + dd;
 const doneKey  = "done_" + dateStr;
 const cacheKey = "cache_" + dateStr;
 
+  // --- यहाँ से नया कोड डालें (पुराना कचरा साफ करने के लिए) ---
+Object.keys(localStorage).forEach(function(key) {
+  if ((key.startsWith("done_") || key.startsWith("cache_")) && !key.endsWith(dateStr)) {
+    localStorage.removeItem(key);
+  }
+});
+// -------------------------------------------------------------
+
 let doneSet  = new Set(JSON.parse(localStorage.getItem(doneKey) || "[]"));
 let allData  = { bhugol: null, science: null, math: null };
 let dayNums  = { bs: null, math: null };
