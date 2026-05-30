@@ -252,7 +252,6 @@
       overflow: hidden;
     }
 
-    /* === SMOOTH SLIDE WRAPPER === */
     #slideWrapper {
       position: relative;
       width: 100%;
@@ -294,7 +293,6 @@
       to   { transform: translateX(0); opacity: 1; }
     }
 
-    /* === CHAPTER CARD === */
     .chapter-card {
       background: var(--card-gradient); 
       border: 1px solid var(--border); 
@@ -330,7 +328,6 @@
       transform: scale(0.97);
     }
 
-    /* Smooth reorder animation */
     .chapter-card.reordering {
       transition: transform 0.45s cubic-bezier(0.34, 1.6, 0.64, 1);
     }
@@ -513,7 +510,10 @@ const API_BS   = "https://script.google.com/macros/s/AKfycbx2e2C9JBilgw7B4ZdOdb5
 const API_MATH = "https://script.google.com/macros/s/AKfycbxk49C7jQafjKBKqR4jPeFzAl2ltlUkd1WXkErL8ih4lXF_19q2eVcFRYr8zCf0OhQBww/exec";
 
 const today    = new Date();
-const dateStr  = today.toISOString().slice(0,10);
+var yyyy = today.getFullYear();
+var mm = String(today.getMonth() + 1).padStart(2, '0');
+var dd = String(today.getDate()).padStart(2, '0');
+const dateStr  = yyyy + '-' + mm + '-' + dd;
 const doneKey  = "done_" + dateStr;
 const cacheKey = "cache_" + dateStr;
 
@@ -585,7 +585,6 @@ function updateProgress() {
 function switchTab(tab, direction) {
   if (isSliding) return;
   if (tab === activeTab && direction === null) {
-    // First load, no animation
     activeTab = tab;
     localStorage.setItem("activeTab", tab);
     updateTabUI();
@@ -594,7 +593,6 @@ function switchTab(tab, direction) {
     return;
   }
   
-  // Determine direction based on tab positions
   if (direction === null) {
     var oldIdx = TABS.indexOf(activeTab);
     var newIdx = TABS.indexOf(tab);
@@ -604,12 +602,11 @@ function switchTab(tab, direction) {
   var content = document.getElementById("content");
   isSliding = true;
   
-  // Step 1: Slide out current content
   var outClass = direction === "left" ? "slide-out-left" : "slide-out-right";
   var inClass  = direction === "left" ? "slide-in-left" : "slide-in-right";
   
   content.classList.remove("slide-out-left", "slide-out-right", "slide-in-left", "slide-in-right");
-  void content.offsetWidth; // force reflow
+  void content.offsetWidth;
   content.classList.add(outClass);
   
   activeTab = tab;
@@ -619,10 +616,8 @@ function switchTab(tab, direction) {
   window.scrollTo(0, 0);
   
   setTimeout(function() {
-    // Step 2: Replace content while hidden
     renderContent();
     
-    // Step 3: Slide in new content
     content.classList.remove(outClass);
     void content.offsetWidth;
     content.classList.add(inClass);
@@ -663,7 +658,6 @@ function renderContent() {
     return;
   }
 
-  // Build all cards first, then sort: pending first, done last
   var cards = [];
   
   if (activeTab === "math") {
@@ -676,7 +670,6 @@ function renderContent() {
     });
   }
   
-  // Sort: pending cards first, done cards last
   var pending = cards.filter(function(c) { return !c.classList.contains("done"); });
   var done    = cards.filter(function(c) { return  c.classList.contains("done"); });
   
@@ -739,7 +732,6 @@ function toggleDone(key, card, clr) {
     cb.textContent = "✓";
   }
   save();
-  // Reorder after animation settles
   setTimeout(reorderCards, 350);
 }
 
@@ -749,7 +741,6 @@ function reorderCards() {
   var pending = cards.filter(function(c) { return !c.classList.contains("done"); });
   var done    = cards.filter(function(c) { return  c.classList.contains("done"); });
   
-  // Check if order already correct
   var needReorder = false;
   var sorted = pending.concat(done);
   for (var i = 0; i < sorted.length; i++) {
@@ -757,17 +748,13 @@ function reorderCards() {
   }
   
   if (needReorder) {
-    // Use FLIP animation for smooth reorder
-    // Record current positions
     var firstPositions = {};
     cards.forEach(function(c) {
       firstPositions[c.dataset.key] = c.getBoundingClientRect().top;
     });
     
-    // Reorder DOM
     pending.concat(done).forEach(function(c) { content.appendChild(c); });
     
-    // Apply inverse transform and animate
     cards.forEach(function(c) {
       var lastTop = c.getBoundingClientRect().top;
       var firstTop = firstPositions[c.dataset.key];
@@ -799,10 +786,8 @@ function haptic() {
   if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// Initial render
 switchTab(activeTab, null);
 
-// Swipe gesture handling
 var touchStartX = 0;
 var touchStartY = 0;
 document.addEventListener("touchstart", function(e) {
@@ -823,7 +808,6 @@ document.addEventListener("touchend", function(e) {
   }
 }, { passive: true });
 
-// Fetch data
 var cacheObj = {};
 var bsDone = false, mathDone = false;
 
