@@ -24,18 +24,23 @@
       --card-gradient: linear-gradient(145deg, #ffffff, #f9fafb);
       --border: #e5e7eb;
       --text: #111827;
-      --muted: #6b7280;
+      --muted: #4b5563;
       
       --accent-b: #3b82f6;
       --accent-g: #22c55e;
       --accent-o: #f97316;
+      --accent-r: #a855f7;
+      --accent-h: #ef4444;
       
       --pill-b-bg: #eff6ff; --pill-b-text: #1d4ed8; --pill-b-border: #bfdbfe;
       --pill-g-bg: #f0fdf4; --pill-g-text: #15803d; --pill-g-border: #bbf7d0;
       --pill-o-bg: #fffbeb; --pill-o-text: #b45309; --pill-o-border: #fde68a;
+      --pill-r-bg: #faf5ff; --pill-r-text: #7e22ce; --pill-r-border: #e9d5ff;
+      --pill-h-bg: #fef2f2; --pill-h-text: #b91c1c; --pill-h-border: #fecaca;
 
-      --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+      --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.07), 0 3px 6px rgba(0, 0, 0, 0.04);
       --card-active-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --check-bg: #f9fafb;
 
       --radius: 18px; 
       --safe-top: env(safe-area-inset-top, 0px);
@@ -53,13 +58,18 @@
         --accent-b: #60a5fa;
         --accent-g: #4ade80;
         --accent-o: #fb923c;
+        --accent-r: #c084fc;
+        --accent-h: #f87171;
 
         --pill-b-bg: rgba(59, 130, 246, 0.15); --pill-b-text: #93c5fd; --pill-b-border: rgba(59, 130, 246, 0.3);
         --pill-g-bg: rgba(34, 197, 94, 0.15); --pill-g-text: #86efac; --pill-g-border: rgba(34, 197, 94, 0.3);
         --pill-o-bg: rgba(249, 115, 22, 0.15); --pill-o-text: #fdba74; --pill-o-border: rgba(249, 115, 22, 0.3);
+        --pill-r-bg: rgba(168, 85, 247, 0.15); --pill-r-text: #d8b4fe; --pill-r-border: rgba(168, 85, 247, 0.3);
+        --pill-h-bg: rgba(239, 68, 68, 0.15); --pill-h-text: #fca5a5; --pill-h-border: rgba(239, 68, 68, 0.3);
 
-        --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         --card-active-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        --check-bg: rgba(255, 255, 255, 0.05);
       }
     }
 
@@ -129,15 +139,20 @@
       border-top: 1px solid var(--border);
       background: var(--card);
       transition: background-color 0.3s, border-color 0.3s;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .tabs::-webkit-scrollbar { display: none; }
 
     .tab-btn {
-      flex: 1;
+      flex: 0 0 33.333%;
       padding: 15px 8px; 
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       font-family: 'Noto Sans Devanagari', sans-serif;
-      text-transform: uppercase; 
+      text-transform: uppercase;
       color: var(--muted);
       background: transparent;
       border: none;
@@ -148,7 +163,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px; 
+      gap: 6px; 
       transition: all 0.4s cubic-bezier(0.34, 1.6, 0.64, 1);
       -webkit-tap-highlight-color: transparent;
     }
@@ -157,7 +172,7 @@
 
     .tab-btn .icon {
       display: inline-block;
-      font-size: 16px;
+      font-size: 14px;
       transition: all 0.5s cubic-bezier(0.34, 1.8, 0.64, 1);
     }
 
@@ -176,17 +191,23 @@
       z-index: 5;
     }
 
-    .tab-btn.active-b::after { width: 100%; background-color: var(--accent-b); box-shadow: 0 -1px 10px 1px rgba(59, 130, 246, 0.7), 0 -2px 18px 2px rgba(59, 130, 246, 0.3); }
-    .tab-btn.active-g::after { width: 100%; background-color: var(--accent-g); box-shadow: 0 -1px 10px 1px rgba(34, 197, 94, 0.7), 0 -2px 18px 2px rgba(34, 197, 94, 0.3); }
-    .tab-btn.active-o::after { width: 100%; background-color: var(--accent-o); box-shadow: 0 -1px 10px 1px rgba(249, 115, 22, 0.7), 0 -2px 18px 2px rgba(249, 115, 22, 0.3); }
+    .tab-btn.active-b::after { width: 100%; background-color: var(--accent-b); box-shadow: 0 -1px 6px 0px rgba(59, 130, 246, 0.5); }
+    .tab-btn.active-g::after { width: 100%; background-color: var(--accent-g); box-shadow: 0 -1px 6px 0px rgba(34, 197, 94, 0.5); }
+    .tab-btn.active-o::after { width: 100%; background-color: var(--accent-o); box-shadow: 0 -1px 6px 0px rgba(249, 115, 22, 0.5); }
+    .tab-btn.active-r::after { width: 100%; background-color: var(--accent-r); box-shadow: 0 -1px 6px 0px rgba(168, 85, 247, 0.5); }
+    .tab-btn.active-h::after { width: 100%; background-color: var(--accent-h); box-shadow: 0 -1px 6px 0px rgba(239, 68, 68, 0.5); }
 
-    .tab-btn.active-b { color: var(--accent-b); font-weight: 700; transform: translateY(-2px) scale(1.05); text-shadow: 0 2px 8px rgba(26, 86, 219, 0.2); }
-    .tab-btn.active-g { color: var(--accent-g); font-weight: 700; transform: translateY(-2px) scale(1.05); text-shadow: 0 2px 8px rgba(14, 159, 110, 0.2); }
-    .tab-btn.active-o { color: var(--accent-o); font-weight: 700; transform: translateY(-2px) scale(1.05); text-shadow: 0 2px 8px rgba(217, 119, 6, 0.2); }
+    .tab-btn.active-b { color: var(--accent-b); font-weight: 700; transform: translateY(-2px) scale(1.15); text-shadow: 0 2px 8px rgba(26, 86, 219, 0.2); }
+    .tab-btn.active-g { color: var(--accent-g); font-weight: 700; transform: translateY(-2px) scale(1.15); text-shadow: 0 2px 8px rgba(14, 159, 110, 0.2); }
+    .tab-btn.active-o { color: var(--accent-o); font-weight: 700; transform: translateY(-2px) scale(1.15); text-shadow: 0 2px 8px rgba(217, 119, 6, 0.2); }
+    .tab-btn.active-r { color: var(--accent-r); font-weight: 700; transform: translateY(-2px) scale(1.15); text-shadow: 0 2px 8px rgba(168, 85, 247, 0.2); }
+    .tab-btn.active-h { color: var(--accent-h); font-weight: 700; transform: translateY(-2px) scale(1.15); text-shadow: 0 2px 8px rgba(239, 68, 68, 0.2); }
 
     .tab-btn.active-b .icon { transform: translateY(-4px) scale(1.3) rotate(-10deg); filter: drop-shadow(0 3px 5px rgba(26,86,219,0.4)); }
     .tab-btn.active-g .icon { transform: translateY(-4px) scale(1.3) rotate(10deg); filter: drop-shadow(0 3px 5px rgba(14,159,110,0.4)); }
     .tab-btn.active-o .icon { transform: translateY(-4px) scale(1.3) rotate(-10deg); filter: drop-shadow(0 3px 5px rgba(217,119,6,0.4)); }
+    .tab-btn.active-r .icon { transform: translateY(-4px) scale(1.3) rotate(10deg); filter: drop-shadow(0 3px 5px rgba(168,85,247,0.4)); }
+    .tab-btn.active-h .icon { transform: translateY(-4px) scale(1.3) rotate(-10deg); filter: drop-shadow(0 3px 5px rgba(239,68,68,0.4)); }
 
     .progress-wrap {
       display: flex;
@@ -223,6 +244,8 @@
     .fill-b { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #2563eb, #60a5fa); box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
     .fill-g { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #16a34a, #4ade80); box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
     .fill-o { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #ea580c, #fb923c); box-shadow: 0 0 10px rgba(249, 115, 22, 0.5); }
+    .fill-r { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #9333ea, #c084fc); box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
+    .fill-h { background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent), linear-gradient(90deg, #dc2626, #f87171); box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
     .progress-label {
       font-size: 12px;
@@ -361,16 +384,18 @@
     .pill-b { background: var(--pill-b-bg); color: var(--pill-b-text); border: 1px solid var(--pill-b-border); }
     .pill-g { background: var(--pill-g-bg); color: var(--pill-g-text); border: 1px solid var(--pill-g-border); }
     .pill-o { background: var(--pill-o-bg); color: var(--pill-o-text); border: 1px solid var(--pill-o-border); }
+    .pill-r { background: var(--pill-r-bg); color: var(--pill-r-text); border: 1px solid var(--pill-r-border); }
+    .pill-h { background: var(--pill-h-bg); color: var(--pill-h-text); border: 1px solid var(--pill-h-border); }
 
     .check-box {
       width: 30px; height: 30px; 
       border-radius: 50%;
-      border: 2.5px solid var(--muted); 
+      border: 3.5px solid var(--muted); 
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       font-size: 16px;
       font-weight: 900;
-      background: var(--card);
+      background: var(--check-bg);
       color: transparent; 
       transition: all 0.3s ease;
       position: relative;
@@ -391,10 +416,22 @@
       50% { transform: scale(1.25) rotate(180deg); box-shadow: 0 0 0 12px rgba(249,115,22,0); }
       100% { transform: scale(1.15) rotate(360deg); box-shadow: 0 4px 12px rgba(249,115,22,0.4); }
     }
+    @keyframes checkPopR {
+      0% { transform: scale(0.8) rotate(0deg); box-shadow: 0 0 0 0 rgba(168,85,247,0.6); }
+      50% { transform: scale(1.25) rotate(180deg); box-shadow: 0 0 0 12px rgba(168,85,247,0); }
+      100% { transform: scale(1.15) rotate(360deg); box-shadow: 0 4px 12px rgba(168,85,247,0.4); }
+    }
 
     .check-b.checked { background: var(--accent-b); border-color: var(--accent-b); color: #fff; animation: checkPopB 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     .check-g.checked { background: var(--accent-g); border-color: var(--accent-g); color: #fff; animation: checkPopG 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     .check-o.checked { background: var(--accent-o); border-color: var(--accent-o); color: #fff; animation: checkPopO 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .check-r.checked { background: var(--accent-r); border-color: var(--accent-r); color: #fff; animation: checkPopR 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .check-h.checked { background: var(--accent-h); border-color: var(--accent-h); color: #fff; animation: checkPopH 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    @keyframes checkPopH {
+      0% { transform: scale(0.8) rotate(0deg); box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      50% { transform: scale(1.25) rotate(180deg); box-shadow: 0 0 0 12px rgba(239,68,68,0); }
+      100% { transform: scale(1.15) rotate(360deg); box-shadow: 0 4px 12px rgba(239,68,68,0.4); }
+    }
 
     .sub-list { 
       display: flex; 
@@ -422,6 +459,15 @@
       padding: 2px 10px;
       border-radius: 6px;
     }
+    .sub-q-r {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-r);
+      font-family: 'Inter', sans-serif;
+      background: var(--pill-r-bg);
+      padding: 2px 10px;
+      border-radius: 6px;
+    }
 
     .loading {
       display: flex; flex-direction: column; align-items: center;
@@ -436,6 +482,8 @@
     .spin-b { border-top-color: var(--accent-b); }
     .spin-g { border-top-color: var(--accent-g); }
     .spin-o { border-top-color: var(--accent-o); }
+    .spin-r { border-top-color: var(--accent-r); }
+    .spin-h { border-top-color: var(--accent-h); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .error-box { text-align: center; padding: 50px 20px; }
@@ -483,7 +531,9 @@
   <div class="tabs" id="tabsContainer">
     <button class="tab-btn" id="tab-b" onclick="switchTab('bhugol', null)"><span class="icon">🌍</span> भूगोल</button>
     <button class="tab-btn" id="tab-g" onclick="switchTab('science', null)"><span class="icon">🔬</span> विज्ञान</button>
+    <button class="tab-btn" id="tab-h" onclick="switchTab('history', null)"><span class="icon">📜</span> इतिहास</button>
     <button class="tab-btn" id="tab-o" onclick="switchTab('math', null)"><span class="icon">📐</span> Math</button>
+    <button class="tab-btn" id="tab-r" onclick="switchTab('reasoning', null)"><span class="icon">🧠</span> Reasoning</button>
   </div>
 </div>
 
@@ -517,23 +567,21 @@ const dateStr  = yyyy + '-' + mm + '-' + dd;
 const doneKey  = "done_" + dateStr;
 const cacheKey = "cache_" + dateStr;
 
-  // --- यहाँ से नया कोड डालें (पुराना कचरा साफ करने के लिए) ---
 Object.keys(localStorage).forEach(function(key) {
   if ((key.startsWith("done_") || key.startsWith("cache_")) && !key.endsWith(dateStr)) {
     localStorage.removeItem(key);
   }
 });
-// -------------------------------------------------------------
 
 let doneSet  = new Set(JSON.parse(localStorage.getItem(doneKey) || "[]"));
-let allData  = { bhugol: null, science: null, math: null };
-let dayNums  = { bs: null, math: null };
+let allData  = { bhugol: null, science: null, math: null, reasoning: null, history: null };
+let dayNums  = { bs: null, math: null, reasoning: null };
 
 var savedTab = localStorage.getItem("activeTab") || "bhugol";
 let activeTab = savedTab;
 let isSliding = false;
 
-const TABS = ["bhugol", "science", "math"];
+const TABS = ["bhugol", "science", "history", "math", "reasoning"];
 
 document.getElementById("dateText").textContent =
   today.toLocaleDateString("hi-IN", { weekday:"long", day:"numeric", month:"long" });
@@ -547,11 +595,16 @@ if (cached) {
       c.bs.subjects.forEach(function(sub) {
         if (sub.name === "भूगोल") allData.bhugol = { chapters: sub.chapters };
         else if (sub.name === "विज्ञान") allData.science = { chapters: sub.chapters };
+        else if (sub.name === "इतिहास") allData.history = { chapters: sub.chapters };
       });
     }
     if (c.math) {
       dayNums.math = c.math.day;
       allData.math = c.math;
+      if (c.math.reasoning) {
+        dayNums.reasoning = c.math.reasoning.day;
+        allData.reasoning = c.math.reasoning;
+      }
     }
   } catch(e) {}
 }
@@ -574,7 +627,10 @@ function countDone(tab) {
 }
 
 function updateDayPill() {
-  var day = activeTab === "math" ? dayNums.math : dayNums.bs;
+  var day;
+  if (activeTab === "math") day = dayNums.math;
+  else if (activeTab === "reasoning") day = dayNums.reasoning;
+  else day = dayNums.bs;
   document.getElementById("dayPill").textContent = day ? "Day " + day : "...";
 }
 
@@ -584,7 +640,7 @@ function updateProgress() {
   var pct   = total ? Math.round((done/total)*100) : 0;
   var fill  = document.getElementById("progressFill");
   fill.style.width = pct + "%";
-  var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
+  var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":activeTab==="reasoning"?"r":activeTab==="history"?"h":"o";
   fill.className = "progress-fill fill-" + clr;
   document.getElementById("progressLabel").textContent = done + " / " + total + " (" + pct + "%)";
   document.getElementById("doneBanner").classList.toggle("show", done===total && total>0);
@@ -638,18 +694,28 @@ function switchTab(tab, direction) {
 }
 
 function updateTabUI() {
-  ["bhugol","science","math"].forEach(function(t) {
-    var k = t==="bhugol"?"b":t==="science"?"g":"o";
+  ["bhugol","science","math","reasoning","history"].forEach(function(t) {
+    var k = t==="bhugol"?"b":t==="science"?"g":t==="math"?"o":t==="reasoning"?"r":"h";
     document.getElementById("tab-"+k).className = "tab-btn";
   });
-  
-  var key = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
+  var key = activeTab==="bhugol"?"b":activeTab==="science"?"g":activeTab==="math"?"o":activeTab==="reasoning"?"r":"h";
   document.getElementById("tab-"+key).className = "tab-btn active-" + key;
+
+  // Active tab ko center me scroll karo
+  var tabsEl = document.getElementById("tabsContainer");
+  var activeBtn = document.getElementById("tab-"+key);
+  if (tabsEl && activeBtn) {
+    var btnLeft = activeBtn.offsetLeft;
+    var btnWidth = activeBtn.offsetWidth;
+    var tabsWidth = tabsEl.offsetWidth;
+    var scrollTo = btnLeft - (tabsWidth / 2) + (btnWidth / 2);
+    tabsEl.scrollTo({ left: scrollTo, behavior: 'smooth' });
+  }
 }
 
 function renderContent() {
   var content = document.getElementById("content");
-  var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":"o";
+  var clr = activeTab==="bhugol"?"b":activeTab==="science"?"g":activeTab==="reasoning"?"r":activeTab==="history"?"h":"o";
 
   if (!allData[activeTab]) {
     content.innerHTML = '<div class="loading"><div class="spinner spin-'+clr+'"></div><span>Loading...</span></div>';
@@ -670,7 +736,11 @@ function renderContent() {
   
   if (activeTab === "math") {
     data.chapters.forEach(function(ch, i) {
-      cards.push(makeMathCard("math_"+i, ch));
+      cards.push(makeSubCard("math_"+i, ch, "o"));
+    });
+  } else if (activeTab === "reasoning") {
+    data.chapters.forEach(function(ch, i) {
+      cards.push(makeSubCard("reasoning_"+i, ch, "r"));
     });
   } else {
     data.chapters.forEach(function(ch, i) {
@@ -701,14 +771,14 @@ function makeBSCard(key, ch, clr) {
   return card;
 }
 
-function makeMathCard(key, ch) {
+function makeSubCard(key, ch, clr) {
   var done = doneSet.has(key);
   var card = document.createElement("div");
   card.className = "chapter-card" + (done?" done":"");
   card.dataset.key = key;
   var subsHtml = '<div class="sub-list">';
   ch.subs.forEach(function(s) {
-    subsHtml += '<div class="sub-row"><span class="sub-label">Sub '+s.subNum+'</span><span class="sub-q">Q. '+s.q+'</span></div>';
+    subsHtml += '<div class="sub-row"><span class="sub-label">Sub '+s.subNum+'</span><span class="sub-q'+(clr==="r"?"-r":"")+'">Q. '+s.q+'</span></div>';
   });
   subsHtml += '</div>';
   card.innerHTML =
@@ -716,8 +786,8 @@ function makeMathCard(key, ch) {
       '<div class="chapter-name">' + ch.chapter + '</div>' +
       subsHtml +
     '</div>' +
-    '<div class="check-box check-o'+(done?" checked":"")+'">'+( done?"✓":"")+'</div>';
-  card.addEventListener("click", function() { toggleDone(key, card, "o"); });
+    '<div class="check-box check-'+clr+(done?" checked":"")+'">'+( done?"✓":"")+'</div>';
+  card.addEventListener("click", function() { toggleDone(key, card, clr); });
   return card;
 }
 
@@ -839,7 +909,7 @@ fetch(API_BS)
       if (sub.name === "भूगोल") allData.bhugol = { chapters: sub.chapters };
       else if (sub.name === "विज्ञान") allData.science = { chapters: sub.chapters };
     });
-    if (activeTab === "bhugol" || activeTab === "science") {
+    if (activeTab === "bhugol" || activeTab === "science" || activeTab === "history") {
       updateDayPill();
       renderContent();
     }
@@ -861,7 +931,15 @@ fetch(API_MATH)
     cacheObj.math = data;
     dayNums.math = data.day;
     allData.math = data;
+    if (data.reasoning) {
+      dayNums.reasoning = data.reasoning.day;
+      allData.reasoning = data.reasoning;
+    }
     if (activeTab === "math") {
+      updateDayPill();
+      renderContent();
+    }
+    if (activeTab === "reasoning") {
       updateDayPill();
       renderContent();
     }
@@ -874,6 +952,10 @@ fetch(API_MATH)
     if (!allData.math && activeTab==="math") {
       document.getElementById("content").innerHTML =
         '<div class="error-box"><p>Math data load नहीं हुआ।</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>';
+    }
+    if (!allData.reasoning && activeTab==="reasoning") {
+      document.getElementById("content").innerHTML =
+        '<div class="error-box"><p>Reasoning data load नहीं हुआ।</p><button class="retry-btn" onclick="location.reload()">Retry</button></div>';
     }
   });
 </script>
